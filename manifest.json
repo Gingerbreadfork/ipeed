@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "IPeed",
+  "version": "1.0",
+  "description": "Fast IP geolocation lookup with multiple data sources",
+  "permissions": [
+    "contextMenus",
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://ipapi.co/*",
+    "https://ip-api.com/*",
+    "https://ipinfo.io/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "IPeed"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

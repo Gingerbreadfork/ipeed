@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      width: 380px;
+      min-height: 480px;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #e0e0e0;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Dark atmospheric background */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 118, 117, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+      color: #ffffff;
+      padding: 8px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #4a9eff, transparent);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+      margin: 0;
+    }
+    
+    .content {
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .instructions {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 20px 0;
+      font-size: 13px;
+      color: #b0b0b0;
+      backdrop-filter: blur(10px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    
+    .instructions strong {
+      color: #4a9eff;
+      font-weight: 600;
+    }
+    
+    .input-section {
+      margin-bottom: 24px;
+    }
+    
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    #ipInput {
+      flex: 1;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 14px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    #ipInput:focus {
+      outline: none;
+      border-color: #4a9eff;
+      box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.2), 0 0 20px rgba(74, 158, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    #ipInput::placeholder {
+      color: #666;
+    }
+    
+    #checkButton {
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #4a9eff 0%, #0066cc 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #checkButton::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    #checkButton:hover::before {
+      left: 100%;
+    }
+    
+    #checkButton:hover {
+      background: linear-gradient(135deg, #5aa3ff 0%, #1a73e8 100%);
+      box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
+      transform: translateY(-1px);
+    }
+    
+    #checkButton:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 10px rgba(74, 158, 255, 0.3);
+    }
+    
+    #checkButton:disabled {
+      background: linear-gradient(135deg, #404040 0%, #2a2a2a 100%);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    
+    .button-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    #tryAnotherButton {
+      background: linear-gradient(135deg, #ff6b6b 0%, #d63031 100%);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+      display: none;
+    }
+    
+    #tryAnotherButton:hover {
+      background: linear-gradient(135deg, #ff7675 0%, #e84393 100%);
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+      transform: translateY(-1px);
+    }
+    
+    #clearCacheButton {
+      background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+      color: #ddd;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    #clearCacheButton:hover {
+      background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(116, 185, 255, 0.4);
+      transform: translateY(-1px);
+    }
+    
+    .result-section {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 20px;
+      backdrop-filter: blur(15px);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    
+    .result-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: #4a9eff;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+    
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    
+    .result-row:last-child {
+      border-bottom: none;
+    }
+    
+    .result-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+      margin: 0 -10px;
+      padding-left: 10px;
+      padding-right: 10px;
+      border-radius: 8px;
+    }
+    
+    .result-label {
+      font-weight: 500;
+      color: #a0a0a0;
+      min-width: 80px;
+    }
+    
+    .result-value {
+      color: #ffffff;
+      text-align: right;
+      word-break: break-word;
+      margin-left: 16px;
+      font-weight: 400;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #4a9eff;
+    }
+    
+    .spinner {
+      border: 2px solid rgba(74, 158, 255, 0.2);
+      border-top: 2px solid #4a9eff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+      box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error {
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(214, 48, 49, 0.1) 100%);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      color: #ff9999;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    
+    .stats {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .stats-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 12px;
+      color: #4a9eff;
+      text-align: center;
+    }
+    
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+      padding: 4px 0;
+    }
+    
+    .info-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .info-label {
+      font-weight: 500;
+      color: #888;
+    }
+    
+    .info-value {
+      color: #ddd;
+      text-align: right;
+      word-break: break-word;
+      max-width: 60%;
+    }
+
+    .source-info {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
+    .source-info .info-value {
+      font-size: 11px;
+      opacity: 0.8;
+      color: #4a9eff;
+    }
+    
+    /* Subtle animations */
+    .result-section, .stats {
+      animation: slideUp 0.4s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(74, 158, 255, 0.3);
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(74, 158, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>IPeed</h1>
+  </div>
+  
+  <div class="content">
+    <div class="input-section">
+      <div class="input-group">
+        <input type="text" id="ipInput" placeholder="Enter IP address (e.g., 8.8.8.8)">
+        <button id="checkButton">Check</button>
+      </div>
+    </div>
+    
+    <div id="result" class="result-section" style="display: none;">
+      <div class="result-title">Location Information</div>
+      <div id="resultContent"></div>
+    </div>
+    
+    <div class="stats" id="stats" style="display: none;">
+      <div class="stats-title">Additional Information</div>
+      <div id="additionalInfo"></div>
+    </div>
+    
+    <div class="instructions">
+      <strong>Usage:</strong><br>
+      • Right-click selected IP on webpage<br>
+      • Or enter IP address manually above
+    </div>
+    
+    <div class="button-row">
+      <button id="tryAnotherButton">Try Another Provider</button>
+      <button id="clearCacheButton">Clear Cache</button>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
